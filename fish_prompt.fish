@@ -36,7 +36,8 @@ function fish_prompt
     set -l git_branch $red(_git_branch_name)
     set git_info "$blue git:($git_branch$blue)"
 
-    if [ (_is_git_dirty) ]
+    set is_dirty (git status --short)
+    if [ $is_dirty ]
       set -l dirty "$yellow ✗"
       set git_info "$git_info$dirty"
     end
