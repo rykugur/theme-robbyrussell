@@ -1,6 +1,9 @@
 # name: rollhax
-
 # forked from RobbyRussel
+
+function _is_git_dirty
+  echo (command git status -s --ignore-submodules=dirty --untracked-files=normal 2> /dev/null)
+end
 
 function fish_prompt
   set -l last_status $status
@@ -18,11 +21,12 @@ function fish_prompt
   end
   set -l cwd $cyan (prompt_pwd)
 
-  if git.is_branch
+  if [ (git.branch) ]
     set -l branch_name (git.branch)
-    set -l branch_color $green
-    if ! git.is_dirty
-      set branch_color $red
+    if [ (_is_git_dirty) ]
+        set branch_color $red
+    else
+      set branch_color $green
     end
 
     set -l git_branch $branch_color$branch_name
