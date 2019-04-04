@@ -1,20 +1,6 @@
-# name: RobbyRussel
-#
-# You can override some default options in your config.fish:
-#   set -g theme_display_git_untracked no
+# name: rollhax
 
-function _git_branch_name
-  echo (command git symbolic-ref HEAD 2> /dev/null | sed -e 's|^refs/heads/||')
-end
-
-function _is_git_dirty
-  set -l show_untracked (git config --bool bash.showUntrackedFiles)
-  set untracked ''
-  if [ "$theme_display_git_untracked" = 'no' -o "$show_untracked" = 'false' ]
-    set untracked '--untracked-files=no'
-  end
-  echo (command git status -s --ignore-submodules=dirty $untracked 2> /dev/null)
-end
+# forked from RobbyRussel
 
 function fish_prompt
   set -l last_status $status
@@ -32,15 +18,15 @@ function fish_prompt
   end
   set -l cwd $cyan (prompt_pwd)
 
-  if [ (_git_branch_name) ]
-    set -l git_branch $red(_git_branch_name)
-    set git_info "$blue git:($git_branch$blue)"
-
-    set is_dirty (git status --short)
-    if [ $is_dirty ]
-      set -l dirty "$yellow ✗"
-      set git_info "$git_info$dirty"
+  if git.is_branch
+    set -l branch_name (git.branch)
+    set -l branch_color $green
+    if ! git.is_dirty
+      set branch_color $red
     end
+
+    set -l git_branch $branch_color$branch_name
+    set git_info "$blue git:($git_branch$blue)"
   end
 
   echo -n -s $arrow ' ' $cwd $git_info $normal ' '
